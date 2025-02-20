@@ -1,7 +1,10 @@
 import pciu from "./pciu.png"
-
+import lock_icon from './lock_icon.svg'
+import mail_icon from './mail_icon.svg'
 export const assets = {
-    pciu
+    pciu,
+    lock_icon,
+    mail_icon
 }
 export const invoices = [
     { id: "INV-1001", name: "John Doe", amount: "$1,200.00", issueDate: "2024-08-01", dueDate: "2024-08-15" },
