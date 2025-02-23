@@ -18,7 +18,7 @@ const ResetPass = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(backendUrl + '/api/auth/reset-pass-otp', { email });
+      const response = await axios.post(backendUrl + '/api/user/reset-otp', { email });
       if (response.data.success) {
         toast.success('OTP sent to your email!');
         setStage(2); // Move to the reset password stage
@@ -41,7 +41,7 @@ const ResetPass = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(backendUrl + '/api/auth/change-pass', { email, otp, newPassword });
+      const response = await axios.post(backendUrl + '/api/user/reset-pass', { email, otp, newPassword });
       if (response.data.success) {
         toast.success('Password reset successfully!');
         navigate('/login')
@@ -81,7 +81,7 @@ const ResetPass = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-indigo-900"
               placeholder="Enter your official email"
               required
             />
@@ -98,7 +98,7 @@ const ResetPass = () => {
                   id="otp"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-indigo-900"
                   placeholder="Enter the OTP"
                   required
                 />
@@ -112,7 +112,7 @@ const ResetPass = () => {
                   id="newPassword"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-indigo-900"
                   placeholder="Enter new password"
                   required
                 />
@@ -126,7 +126,7 @@ const ResetPass = () => {
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="mt-1 block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-indigo-900"
                   placeholder="Confirm new password"
                   required
                 />
