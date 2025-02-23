@@ -108,7 +108,7 @@ const Login = () => {
                     </p>
                     <button
                         type="submit"
-                        className="w-full py-2.5 rounded-full bg-yellow-50 text-gray-700 font-medium shadow-md hover:bg-slate-100 flex justify-center items-center font-semibold"
+                        className="w-full py-2.5 rounded-full bg-yellow-50 text-gray-700 shadow-md hover:bg-slate-100 flex justify-center items-center font-semibold"
                         disabled={loading} // ⬅️ Disable button when loading
                     >
                         {loading ? (
