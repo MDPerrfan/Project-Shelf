@@ -6,7 +6,7 @@ export const AppContext = createContext()
 
 export const AppContextProvider = (props)=>{
 
-    const backendUrl = 'https://projectshowserver.onrender.com'
+    const backendUrl = 'http://localhost:4000'
     const [isLoggedin, setIsLoggedin] = useState(false);
     const [userData, setUserData] = useState(null);
     axios.defaults.withCredentials = true;

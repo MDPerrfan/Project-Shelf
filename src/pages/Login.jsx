@@ -27,8 +27,6 @@ const Login = () => {
 
                 if (fetchedUserData) {
                     setLoading(false);
-                    console.log(fetchedUserData.isVerified);
-
                     if (fetchedUserData.isVerified) {
                         navigate('/dashboard');
                     } else {
@@ -37,6 +35,7 @@ const Login = () => {
                     }
 
                     setIsLoggedin(true);
+                    toast.success("Logged in!")
                 }
             } else {
                 toast.error(data.message);
