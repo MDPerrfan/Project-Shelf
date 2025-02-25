@@ -2,31 +2,40 @@ import pciu from "./pciu.png"
 import lock_icon from './lock_icon.svg'
 import mail_icon from './mail_icon.svg'
 import dropdown_icon from './dropdown_icon.svg'
+import home_icon from './home_icon.svg'
+import add_icon from './add_icon.svg'
 export const assets = {
     pciu,
     lock_icon,
     mail_icon,
-    dropdown_icon
+    dropdown_icon,
+    home_icon,
+    add_icon
 }
-export const invoices = [
-    { id: "INV-1001", name: "John Doe", amount: "$1,200.00", issueDate: "2024-08-01", dueDate: "2024-08-15" },
-    { id: "INV-1002", name: "Jane Smith", amount: "$850.00", issueDate: "2024-08-05", dueDate: "2024-08-20" },
-    { id: "INV-1003", name: "Acme Corp", amount: "$2,500.00", issueDate: "2024-08-07", dueDate: "2024-08-21" },
-    { id: "INV-1004", name: "Global Inc", amount: "$4,750.00", issueDate: "2024-08-10", dueDate: "2024-08-25" },
-    { id: "INV-1005", name: "Tech Solutions", amount: "$3,200.00", issueDate: "2024-08-12", dueDate: "2024-08-27" },
-    { id: "INV-1006", name: "Alpha Industries", amount: "$5,600.00", issueDate: "2024-08-15", dueDate: "2024-08-30" },
-    { id: "INV-1007", name: "Beta Ltd.", amount: "$1,980.00", issueDate: "2024-08-18", dueDate: "2024-09-02" },
-    { id: "INV-1008", name: "Gamma Enterprises", amount: "$3,750.00", issueDate: "2024-08-20", dueDate: "2024-09-05" },
-    { id: "INV-1009", name: "Delta Co.", amount: "$2,150.00", issueDate: "2024-08-22", dueDate: "2024-09-07" },
-    { id: "INV-1010", name: "Sigma Services", amount: "$7,900.00", issueDate: "2024-08-25", dueDate: "2024-09-10" },
-    { id: "INV-1001", name: "John Doe", amount: "$1,200.00", issueDate: "2024-08-01", dueDate: "2024-08-15" },
-    { id: "INV-1002", name: "Jane Smith", amount: "$850.00", issueDate: "2024-08-05", dueDate: "2024-08-20" },
-    { id: "INV-1003", name: "Acme Corp", amount: "$2,500.00", issueDate: "2024-08-07", dueDate: "2024-08-21" },
-    { id: "INV-1004", name: "Global Inc", amount: "$4,750.00", issueDate: "2024-08-10", dueDate: "2024-08-25" },
-    { id: "INV-1005", name: "Tech Solutions", amount: "$3,200.00", issueDate: "2024-08-12", dueDate: "2024-08-27" },
-    { id: "INV-1006", name: "Alpha Industries", amount: "$5,600.00", issueDate: "2024-08-15", dueDate: "2024-08-30" },
-    { id: "INV-1007", name: "Beta Ltd.", amount: "$1,980.00", issueDate: "2024-08-18", dueDate: "2024-09-02" },
-    { id: "INV-1008", name: "Gamma Enterprises", amount: "$3,750.00", issueDate: "2024-08-20", dueDate: "2024-09-05" },
-    { id: "INV-1009", name: "Delta Co.", amount: "$2,150.00", issueDate: "2024-08-22", dueDate: "2024-09-07" },
-    { id: "INV-1010", name: "Sigma Services", amount: "$7,900.00", issueDate: "2024-08-25", dueDate: "2024-09-10" }
+export const projects = [{
+        id: "P-001",
+        name: "John Doe",
+        batch: "27",
+        title: "AI-Based Chatbot for Customer Support",
+        supervisor: "Erfan",
+        year: "2023",
+        link: "adf",
+        keywords: ["AI", "Chatbot", "NLP", "Machine Learning"],
+    },
+    {
+        id: "P-002",
+        name: "Alice Johnson",
+        title: "Blockchain-Based Secure Voting System",
+        supervisor: "Prof. Brown",
+        year: "2022",
+        keywords: ["Blockchain", "Cryptography", "E-Voting"],
+    },
+    {
+        id: "P-003",
+        name: "Michael Lee",
+        title: "IoT-Based Smart Agriculture System",
+        supervisor: "Dr. Smith",
+        year: "2024",
+        keywords: ["IoT", "Sensors", "Smart Farming"],
+    }
 ];

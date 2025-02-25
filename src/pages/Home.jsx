@@ -5,7 +5,7 @@ import Table from '../components/Table'
 import Footer from '../components/Footer'
 const Home = () => {
   return (
-    <div className=' h-screen'>
+    <div className='h-screen'>
       <Navbar/>
       <Hero/>
       <Table/>
