@@ -38,7 +38,7 @@ const Navbar = () => {
                         </div>
                     </div>
                 ) : (
-                    <button onClick={() => navigate('/login')} className='bg-blue-600 text-white px-8 py-3 rounded-full font-light'>
+                    <button onClick={() => navigate('/login')} className='bg-blue-600 text-white px-6 py-2 rounded-full font-light'>
                         Login
                     </button>
                 )}

@@ -101,7 +101,7 @@ const Add = () => {
           <img onClick={() => navigate('/profile')} className='w-10 rounded-full cursor-pointer' src={userData.image} alt="User" />
         </div>
       </div>
-      
+
       <div className="flex">
         <Sidebar />
         <div className="p-6 w-full">
@@ -136,9 +136,10 @@ const Add = () => {
                   <div className="flex flex-col gap-1">
                     <p>Year</p>
                     <select className="border rounded p-2" name="year" value={project.year} onChange={handleChange} required>
-                  <option value="">Select Year</option>
-                  {years.map((year) => <option key={year} value={year}>{year}</option>)}
-                </select>                  </div>
+                      <option value="">Select Year</option>
+                      {years.map((year) => <option key={year} value={year}>{year}</option>)}
+                    </select>
+                  </div>
                   <div className="flex flex-col gap-1">
                     <p>Project Link (if have)</p>
                     <input className="border rounded px-3 py-2" type="url" name="link" value={project.link} onChange={handleChange} />

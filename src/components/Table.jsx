@@ -1,30 +1,43 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { projects } from '../assets/assets'
 import { useState } from "react";
+import { AppContext } from '../Context/AppContext';
+import { Oval } from 'react-loader-spinner'
 
 const Table = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [supervisorFilter, setSupervisorFilter] = useState("");
     const [yearFilter, setYearFilter] = useState("");
+    const [filteredProjects, setFilteredProjects] = useState([]);
 
-    const filteredProjects = projects.filter((project) => {
+    const { projectData } = useContext(AppContext);
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: currentYear - 2016 }, (_, i) => 2017 + i);
+    useEffect(() => {
+        if (!projectData) return;
+        const filtered = projectData.filter((project) => {
+            return (
+                (searchTerm === "" ||
+                    project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    project.keywords.some((keyword) =>
+                        keyword.toLowerCase().includes(searchTerm.toLowerCase())
+                    )) &&
+                (supervisorFilter === "" ||
+                    project.supervisor.toLowerCase() === supervisorFilter.toLowerCase()) &&
+                (yearFilter === "" || project.year === yearFilter)
+            );
+        });
+        setFilteredProjects(filtered);
+    }, [projectData, searchTerm, supervisorFilter, yearFilter]);
+    if (!projectData)
         return (
-            (searchTerm === "" ||
-                project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                project.keywords.some((keyword) =>
-                    keyword.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-            ) &&
-            (supervisorFilter === "" ||
-                project.supervisor.toLowerCase() === supervisorFilter.toLowerCase()
-            ) &&
-            (yearFilter === "" || project.year === yearFilter)
+            <div className="flex items-center justify-center min-h-screen">
+                <Oval visible={true} height="80" width="80" color="#4fa94d" ariaLabel="oval-loading" />
+            </div>
         );
-    });
-
     return (
-        <div className="py-0.5 px-4 sm:px-10 md:px-14 lg:px-36 min-h-screen">
+        <div className="py-0.5 px-4 sm:px-10 md:px-14 lg:px-36 min-h-lvh">
             <div className="flex flex-col lg:flex-row md:items-start md:flex-row justify-between mb-3 mt-1 ">
                 <div className='flex flex-col gap-1 mb-2'>
                     <div className="relative w-full max-w-sm">
@@ -68,80 +81,47 @@ const Table = () => {
                         className="p-2 border border-gray-300 rounded-md text-gray-600 text-sm"
                         onChange={(e) => setYearFilter(e.target.value)}
                     >
-                        <option value="">Filter by Year</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
-                        <option value="2024">2024</option>
+                        <option value="">Select Year</option>
+                        {years.map((year) => <option key={year} value={year}>{year}</option>)}
                     </select>
                 </div>
             </div>
 
-            <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
-                <table className="w-full text-left table-auto min-w-max">
-                    <thead>
+            <div className="relative w-full h-full overflow-auto bg-white shadow-lg rounded-lg">
+                <table className="w-full text-left border-collapse">
+                    {/* Table Header */}
+                    <thead className="sticky top-0 bg-slate-700 text-white">
                         <tr>
-                            <th className="p-4 border-b border-slate-300 bg-slate-50">
-                                <p className="block text-sm font-normal leading-none text-slate-500">
-                                    Project ID
-                                </p>
-                            </th>
-                            <th className="p-4 border-b border-slate-300 bg-slate-50">
-                                <p className="block text-sm font-normal leading-none text-slate-500">
-                                    Student
-                                </p>
-                            </th>
-                            <th className="p-4 border-b border-slate-300 bg-slate-50">
-                                <p className="block text-sm font-normal leading-none text-slate-500">
-                                    Supervisor
-                                </p>
-                            </th>
-                            <th className="p-4 border-b border-slate-300 bg-slate-50">
-                                <p className="block text-sm font-normal leading-none text-slate-500">
-                                    Title
-                                </p>
-                            </th>
-                            <th className="p-4 border-b border-slate-300 bg-slate-50">
-                                <p className="block text-sm font-normal leading-none text-slate-500">
-                                    Year
-                                </p>
-                            </th>
-                            <th className="p-4 border-b border-slate-300 bg-slate-50">
-                                <p className="block text-sm font-normal leading-none text-slate-500">
-                                    Keywords
-                                </p>
-                            </th>
+                            {["Student ID", "Student Name", "Batch", "Supervisor", "Title", "Link", "Year", "Technologies"].map((heading, index) => (
+                                <th key={index} className="p-4 text-sm font-semibold border-b border-slate-500">
+                                    {heading}
+                                </th>
+                            ))}
                         </tr>
                     </thead>
+
+                    {/* Table Body */}
                     <tbody>
                         {filteredProjects.map((project, index) => (
-                            <tr key={index} className="hover:bg-slate-50">
-                                <td className="p-4 border-b border-slate-200 py-5">
-                                    <p className="block font-semibold text-sm text-slate-800">
-                                        {project.id}
-                                    </p>
+                            <tr key={index} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
+                                <td className="p-4 text-sm font-medium text-slate-700">{project.id}</td>
+                                <td className="p-4 text-sm text-slate-600">{project.name}</td>
+                                <td className="p-4 text-sm text-slate-600">{project.batch}</td>
+                                <td className="p-4 text-sm text-slate-600">{project.supervisor}</td>
+                                <td className="p-4 text-sm text-slate-600">{project.title}</td>
+                                <td className="p-4 text-sm">
+                                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 hover:underline">
+                                        View
+                                    </a>
                                 </td>
-                                <td className="p-4 border-b border-slate-200 py-5">
-                                    <p className="text-sm text-slate-500">{project.name}</p>
-                                </td>
-                                <td className="p-4 border-b border-slate-200 py-5">
-                                    <p className="text-sm text-slate-500">{project.supervisor}</p>
-                                </td>
-                                <td className="p-4 border-b border-slate-200 py-5">
-                                    <p className="text-sm text-slate-500">{project.title}</p>
-                                </td>
-                                <td className="p-4 border-b border-slate-200 py-5">
-                                    <p className="text-sm text-slate-500">{project.year}</p>
-                                </td>
-                                <td className="p-4 border-b border-slate-200 py-5">
-                                    <p className="text-sm text-slate-500">
-                                        {project.keywords.join(", ")}
-                                    </p>
-                                </td>
+                                <td className="p-4 text-sm text-slate-600">{project.year}</td>
+                                <td className="p-4 text-sm text-slate-600">{project.keywords.join(", ")}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
         </div>
     );
 }

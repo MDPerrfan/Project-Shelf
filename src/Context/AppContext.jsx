@@ -1,18 +1,20 @@
 import { createContext } from "react";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 export const AppContext = createContext()
 
-export const AppContextProvider = (props)=>{
+export const AppContextProvider = (props) => {
 
     const backendUrl = 'https://projectshowserver.onrender.com'
     const [isLoggedin, setIsLoggedin] = useState(false);
     const [userData, setUserData] = useState(null);
+    const [projectData, setProjectData] = useState(null);
+
     axios.defaults.withCredentials = true;
 
-     // ✅ Fetch auth state and user data on page load
-     const getAuthState = async () => {
+    // ✅ Fetch auth state and user data on page load
+    const getAuthState = async () => {
         try {
             const { data } = await axios.get(`${backendUrl}/api/user/is-auth`);
             if (data.success) {
@@ -48,19 +50,34 @@ export const AppContextProvider = (props)=>{
             return null;
         }
     };
+    const getProjectsData = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/project/get')
+            if (data) {
+                setProjectData(data);
+            }
+        } catch (error) {
+            console.error("User Data Fetch Error:", error);
+            toast.error(error.message);
+            setProjectData(null);
+            return null;
+        }
+    }
     useEffect(() => {
         getAuthState();
+        getProjectsData();
     }, []);
-    const value={
+    const value = {
         backendUrl,
         isLoggedin,
         setIsLoggedin,
         userData,
         setUserData,
         getUserData,
-        
+        projectData
+
     }
-    return(
+    return (
         <AppContext.Provider value={value}>
             {props.children}
         </AppContext.Provider>
