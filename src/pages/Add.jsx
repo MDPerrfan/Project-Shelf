@@ -78,13 +78,20 @@ const Add = () => {
           keywords: [],
           customKeyword: ""
         });
+      } else {
+        toast.error(data.message || "Something went wrong");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to add project!")
+      if (error.response && error.response.status === 400) {
+        // Show toast notification if Student ID already exists
+        toast.error(error.response.data.message);
+      } else {
+        console.log(error);
+        toast.error("An error occurred while adding the project.");
+      }
     }
   };
-
+  
   if (!userData) return (
     <div className='flex items-center justify-center min-h-screen'>
       <Oval height="80" width="80" color="#4fa94d" ariaLabel="oval-loading" />
@@ -110,7 +117,7 @@ const Add = () => {
       </div>
 
       <div className="flex">
-        <div className='hidden md:block'>
+        <div className='hidden lg:block'>
         <Sidebar />
         </div>
         <div className="p-6 w-full">
