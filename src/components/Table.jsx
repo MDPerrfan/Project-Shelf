@@ -114,8 +114,8 @@ const Table = () => {
                                         View
                                     </a>
                                 </td>
-                                <td className="p-4 text-sm text-slate-600">{project.year}</td>
-                                <td className="p-4 text-sm text-slate-600">{project.keywords.join(", ")}</td>
+                                <td className="p-4 text-sm text-slate-600 ">{project.year}</td>
+                                <td className="p-4 text-sm text-slate-600 ">{project.keywords.join(", ")}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -97,13 +97,22 @@ const Add = () => {
         <div>
           <img onClick={() => navigate('/')} src={assets.pciu} alt="Logo" className="w-10 sm:w-14 cursor-pointer m-1" />
         </div>
-        <div>
-          <img onClick={() => navigate('/profile')} className='w-10 rounded-full cursor-pointer' src={userData.image} alt="User" />
-        </div>
+      <div className='flex items-center gap-3 cursor-pointer group relative'>
+            <img className='w-8 rounded-full' src={userData.image} alt="User" />
+            <img className='w-2.5' src={assets.dropdown_icon} alt="Dropdown" />
+            <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block'>
+              <div className='min-w-48 bg-stone-100 p-4 rounded flex flex-col gap-4'>
+                <p onClick={() => navigate('/dashboard')} className='hover:text-black cursor-pointer'>Dashboard</p>
+                <p onClick={() => navigate('/profile')} className='hover:text-black cursor-pointer'>Profile</p>
+              </div>
+            </div>
+          </div>
       </div>
 
       <div className="flex">
+        <div className='hidden md:block'>
         <Sidebar />
+        </div>
         <div className="p-6 w-full">
           <form className="m-5 max-w-6xl" onSubmit={handleSubmit}>
             <p className="mb-5 text-lg font-medium text-gray-700">Add Project</p>

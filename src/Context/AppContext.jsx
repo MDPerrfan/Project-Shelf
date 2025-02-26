@@ -2,6 +2,7 @@ import { createContext } from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify'
+import { useNavigate } from "react-router-dom";
 export const AppContext = createContext()
 
 export const AppContextProvider = (props) => {
@@ -10,7 +11,7 @@ export const AppContextProvider = (props) => {
     const [isLoggedin, setIsLoggedin] = useState(false);
     const [userData, setUserData] = useState(null);
     const [projectData, setProjectData] = useState(null);
-
+    const navigate = useNavigate()
     axios.defaults.withCredentials = true;
 
     // ✅ Fetch auth state and user data on page load
@@ -63,6 +64,18 @@ export const AppContextProvider = (props) => {
             return null;
         }
     }
+    const logout = async () => {
+        try {
+            const { data } = await axios.post(backendUrl + '/api/user/logout');
+            if (data.success) {
+                setIsLoggedin(false);  // Update login state
+                setUserData(null);  // Clear user data
+                navigate('/');  // Redirect to home
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Logout failed!");
+        }
+    };
     useEffect(() => {
         getAuthState();
         getProjectsData();
@@ -74,7 +87,8 @@ export const AppContextProvider = (props) => {
         userData,
         setUserData,
         getUserData,
-        projectData
+        projectData,
+        logout
 
     }
     return (

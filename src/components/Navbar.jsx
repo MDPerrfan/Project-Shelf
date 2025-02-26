@@ -2,26 +2,11 @@ import React, { useContext} from 'react';
 import { assets } from '../assets/assets';
 import {  useNavigate } from 'react-router-dom';
 import { AppContext } from '../Context/AppContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+
 
 const Navbar = () => {
-    const { isLoggedin, backendUrl, setIsLoggedin, userData, setUserData } = useContext(AppContext);
+    const { isLoggedin,  userData,  logout} = useContext(AppContext);
     const navigate = useNavigate();
-
-    const logout = async () => {
-        try {
-            const { data } = await axios.post(backendUrl + '/api/user/logout');
-            if (data.success) {
-                setIsLoggedin(false);  // Update login state
-                setUserData(null);  // Clear user data
-                navigate('/');  // Redirect to home
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || "Logout failed!");
-        }
-    };
-
     return (
         <div className='flex items-center justify-between border-b shadow py-0.5 px-4 sm:px-10 md:px-14 lg:px-36 '>
             <img src={assets.pciu} alt="" className='w-10 md:w-16 cursor-pointer' onClick={()=>navigate('/')}/>
