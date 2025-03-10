@@ -16,16 +16,16 @@ const predefinedKeywords = [
 const Add = () => {
   const navigate = useNavigate();
   const { userData, backendUrl } = useContext(AppContext);
+  const [numStudents, setNumStudents] = useState(1);
   const [project, setProject] = useState({
-    id: "",
-    name: "",
+    students: [{ id: "", name: "" }],
     batch: "",
     title: "",
-    supervisor: userData?.name || "", // Automatically set supervisor to logged-in user
+    supervisor: userData?.name || "",
     year: "",
     link: "",
     keywords: [],
-    customKeyword: "" // For user-defined keywords
+    customKeyword: ""
   });
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 2016 }, (_, i) => 2017 + i);
@@ -61,6 +61,32 @@ const Add = () => {
       keywords: prev.keywords.filter((k) => k !== keyword)
     }));
   };
+
+  const handleStudentChange = (index, field, value) => {
+    setProject(prev => {
+      const newStudents = [...prev.students];
+      newStudents[index] = {
+        ...newStudents[index],
+        [field]: value
+      };
+      return {
+        ...prev,
+        students: newStudents
+      };
+    });
+  };
+
+  const handleNumStudentsChange = (e) => {
+    const num = parseInt(e.target.value);
+    setNumStudents(num);
+    setProject(prev => ({
+      ...prev,
+      students: Array(num).fill(null).map((_, index) => 
+        prev.students[index] || { id: "", name: "" }
+      )
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -68,8 +94,7 @@ const Add = () => {
       if (data.success) {
         toast.success("Project added successfully!");
         setProject({
-          id: "",
-          name: "",
+          students: [{ id: "", name: "" }],
           batch: "",
           title: "",
           supervisor: userData?.name || "",
@@ -78,6 +103,7 @@ const Add = () => {
           keywords: [],
           customKeyword: ""
         });
+        setNumStudents(1);
       } else {
         toast.error(data.message || "Something went wrong");
       }
@@ -127,20 +153,68 @@ const Add = () => {
               <div className="flex flex-col lg:flex-row gap-10 text-gray-600">
                 <div className="w-full lg:flex-1 flex flex-col gap-4">
                   <div className="flex flex-col gap-1">
-                    <p>Student ID</p>
-                    <input className="border rounded px-3 py-2" type="text" name="id" value={project.id} onChange={handleChange} required />
+                    <p>Number of Students</p>
+                    <select 
+                      className="border rounded px-3 py-2"
+                      value={numStudents}
+                      onChange={handleNumStudentsChange}
+                    >
+                      {[1, 2, 3, 4, 5].map(num => (
+                        <option key={num} value={num}>{num}</option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <p>Student Name</p>
-                    <input className="border rounded px-3 py-2" type="text" name="name" value={project.name} onChange={handleChange} required />
-                  </div>
+                  
+                  {project.students.map((student, index) => (
+                    <div key={index} className="border p-4 rounded">
+                      <p className="font-medium mb-2">Student {index + 1}</p>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <p>Student ID</p>
+                          <input 
+                            className="border rounded px-3 py-2"
+                            type="text"
+                            value={student.id}
+                            onChange={(e) => handleStudentChange(index, 'id', e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <p>Student Name</p>
+                          <input 
+                            className="border rounded px-3 py-2"
+                            type="text"
+                            value={student.name}
+                            onChange={(e) => handleStudentChange(index, 'name', e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
                   <div className="flex flex-col gap-1">
                     <p>Batch</p>
-                    <input className="border rounded px-3 py-2" type="text" name="batch" value={project.batch} onChange={handleChange} required />
+                    <input 
+                      className="border rounded px-3 py-2"
+                      type="text"
+                      name="batch"
+                      value={project.batch}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
+                  
                   <div className="flex flex-col gap-1">
                     <p>Project Title</p>
-                    <input className="border rounded px-3 py-2" type="text" name="title" value={project.title} onChange={handleChange} required />
+                    <input 
+                      className="border rounded px-3 py-2"
+                      type="text"
+                      name="title"
+                      value={project.title}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
                 </div>
 
