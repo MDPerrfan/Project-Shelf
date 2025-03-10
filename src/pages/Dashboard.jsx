@@ -8,7 +8,7 @@ import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { userData, projectData, logout,backendUrl } = useContext(AppContext);
+  const { userData, projectData,setProjectData, logout,backendUrl } = useContext(AppContext);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [editingProjectId, setEditingProjectId] = useState(null);
   const [editedProject, setEditedProject] = useState({});
@@ -22,7 +22,7 @@ const Dashboard = () => {
   }, [userData, projectData]);
 
   const handleEditClick = (project) => {
-    setEditingProjectId(project.id);
+    setEditingProjectId(project._id);
     setEditedProject({ ...project });
   };
 
@@ -32,25 +32,46 @@ const Dashboard = () => {
 
   const handleSave = async (id) => {
     try {
-      const response = await axios.put(`${backendUrl}/api/project/update/${id}`, editedProject);
-      setFilteredProjects(
-        filteredProjects.map((proj) => (proj._id === id ? response.data : proj))
-      );
-      toast.success("Updated!")
-      setEditingProjectId(null);
+      const updatedProject = {
+        ...editedProject,
+        students: editedProject.students.filter(student => student.id && student.name)
+      };
+
+      const response = await axios.put(`${backendUrl}/api/project/update/${id}`, updatedProject);
+      
+      if (response.data.success) {
+        setFilteredProjects(prevData =>
+          prevData.map(proj => proj._id === id ? response.data.project : proj)
+        );
+        
+        setProjectData(prevData =>
+          prevData.map(proj => proj._id === id ? response.data.project : proj)
+        );
+        
+        toast.success("Project updated successfully!");
+        setEditingProjectId(null);
+      } else {
+        toast.error(response.data.message || "Failed to update project");
+      }
     } catch (error) {
       console.error("Error updating project:", error);
-      toast.error("Failed to updated!")
+      toast.error(error.response?.data?.message || "Failed to update project");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${backendUrl}/api/project/delete/${id}`);
-      setFilteredProjects(filteredProjects.filter((proj) => proj._id !== id));
-      toast.success("Deleted!")
+      const response = await axios.delete(`${backendUrl}/api/project/delete/${id}`);
+      if (response.data.success) {
+        setFilteredProjects(prevData => prevData.filter(proj => proj._id !== id));
+        setProjectData(prevData => prevData.filter(proj => proj._id !== id));
+        toast.success("Project deleted successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to delete project");
+      }
     } catch (error) {
       console.error("Error deleting project:", error);
+      toast.error(error.response?.data?.message || "Failed to delete project");
     }
   };
 
@@ -93,7 +114,7 @@ const Dashboard = () => {
               <table className="w-full text-left border-collapse">
                 <thead className="sticky top-0 bg-slate-700 text-white">
                   <tr>
-                    {["Student ID", "Student Name", "Batch", "Title", "Supervisor", "Year", "Link", "Keywords", "Actions"].map((heading, index) => (
+                    {["Students", "Batch", "Title", "Supervisor", "Year", "Link", "Keywords", "Actions"].map((heading, index) => (
                       <th key={index} className="p-4 text-sm font-semibold border-b border-slate-500">{heading}</th>
                     ))}
                   </tr>
@@ -101,22 +122,111 @@ const Dashboard = () => {
                 <tbody>
                   {filteredProjects.map((project, index) => (
                     <tr key={index} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
-                      {["id", "name", "batch", "title", "supervisor", "year", "link", "keywords"].map((key, i) => (
+                      <td className="p-4 text-md text-slate-600">
+                        {editingProjectId === project._id ? (
+                          <div className="space-y-2">
+                            {editedProject.students?.map((student, idx) => (
+                              <div key={idx} className="flex gap-2">
+                                <input 
+                                  type="text" 
+                                  value={student.id || ''} 
+                                  onChange={(e) => {
+                                    const newStudents = [...editedProject.students];
+                                    newStudents[idx] = { ...student, id: e.target.value };
+                                    setEditedProject({ ...editedProject, students: newStudents });
+                                  }} 
+                                  className="border p-1 w-1/2" 
+                                  placeholder="Student ID"
+                                />
+                                <input 
+                                  type="text" 
+                                  value={student.name || ''} 
+                                  onChange={(e) => {
+                                    const newStudents = [...editedProject.students];
+                                    newStudents[idx] = { ...student, name: e.target.value };
+                                    setEditedProject({ ...editedProject, students: newStudents });
+                                  }} 
+                                  className="border p-1 w-1/2" 
+                                  placeholder="Student Name"
+                                />
+                                {idx === editedProject.students.length - 1 && editedProject.students.length < 5 && (
+                                  <button 
+                                    onClick={() => {
+                                      setEditedProject({
+                                        ...editedProject,
+                                        students: [...editedProject.students, { id: '', name: '' }]
+                                      });
+                                    }}
+                                    className="bg-green-500 text-white px-2 rounded"
+                                  >
+                                    +
+                                  </button>
+                                )}
+                                {editedProject.students.length > 1 && (
+                                  <button 
+                                    onClick={() => {
+                                      setEditedProject({
+                                        ...editedProject,
+                                        students: editedProject.students.filter((_, i) => i !== idx)
+                                      });
+                                    }}
+                                    className="bg-red-500 text-white px-2 rounded"
+                                  >
+                                    -
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {project.students?.map((student, idx) => (
+                              <div key={idx} className="text-sm">
+                                <span className="font-medium">{student.id}</span> - {student.name}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                      {["batch", "title", "supervisor", "year", "link", "keywords"].map((key, i) => (
                         <td key={i} className="p-4 text-md text-slate-600">
-                          {editingProjectId === project.id && key !== 'id' ? (
-                            <input type="text" value={editedProject[key] || ''} onChange={(e) => handleChange(e, key)} className="border p-1 w-full" />
+                          {editingProjectId === project._id ? (
+                            <input 
+                              type="text" 
+                              value={editedProject[key] || ''} 
+                              onChange={(e) => handleChange(e, key)} 
+                              className="border p-1 w-full" 
+                            />
                           ) : (
-                            key === 'link' ? <a href={project[key]} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">View</a> : project[key]
+                            key === 'link' ? (
+                              <a href={project[key]} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                View
+                              </a>
+                            ) : key === 'keywords' ? (
+                              <div className="flex flex-wrap gap-1">
+                                {project[key].map((keyword, idx) => (
+                                  <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                                    {keyword}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : project[key]
                           )}
                         </td>
                       ))}
                       <td className="p-4 flex flex-col gap-2">
-                        {editingProjectId === project.id ? (
-                          <button onClick={() => handleSave(project._id)} className="bg-green-700 text-white px-3 py-1 rounded-full">Save</button>
+                        {editingProjectId === project._id ? (
+                          <button onClick={() => handleSave(project._id)} className="bg-green-700 text-white px-3 py-1 rounded-full">
+                            Save
+                          </button>
                         ) : (
-                          <button onClick={() => handleEditClick(project)} className="bg-blue-700 text-white px-3 py-1 rounded-full">Edit</button>
+                          <button onClick={() => handleEditClick(project)} className="bg-blue-700 text-white px-3 py-1 rounded-full">
+                            Edit
+                          </button>
                         )}
-                        <button onClick={() => handleDelete(project._id)} className="bg-red-600 text-white px-3 py-1 rounded-full">Delete</button>
+                        <button onClick={() => handleDelete(project._id)} className="bg-red-600 text-white px-3 py-1 rounded-full">
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   ))}
