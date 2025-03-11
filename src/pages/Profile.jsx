@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import { Oval } from 'react-loader-spinner'
 
 const MyProfile = () => {
-    const { userData, setUserData, token, backendUrl, loadUserProfile} = useContext(AppContext);
+    const { userData, setUserData, token, backendUrl, loadUserProfile } = useContext(AppContext);
     const [isEdit, setIsEdit] = useState(false)
     const [image, setImage] = useState(false)
     if (!userData) {
@@ -27,6 +27,7 @@ const MyProfile = () => {
     const updateUserProfileData = async () => {
         try {
             const formData = new FormData()
+            formData.append('userId', userData._id)
             formData.append('name', userData.name)
             formData.append('phone', userData.phone)
             formData.append('address', JSON.stringify(userData.address))
@@ -35,7 +36,9 @@ const MyProfile = () => {
 
             image && formData.append('image', image)
 
-            const { data } = await axios.post(backendUrl + '/api/user/update-profile', formData, { headers: { token } })
+            console.log('Sending data:', Object.fromEntries(formData));
+
+            const { data } = await axios.post(backendUrl + '/api/user/update-profile', formData)
 
             if (data.success) {
                 toast.success(data.message)
@@ -46,11 +49,12 @@ const MyProfile = () => {
                 toast.error(data.message);
             }
         } catch (error) {
-            console.log(error)
+            console.error('Update profile error:', error);
+            toast.error(error.response?.data?.message || "Failed to update profile");
         }
     }
- 
- 
+
+
     return userData && (
         <div className=' '>
             <Navbar />
@@ -101,10 +105,17 @@ const MyProfile = () => {
                         <p className='font-medium'>Gender:</p>
                         {
                             isEdit
-                                ? <select className='max-w-20 bg-gray-200  rounded-md p-1' onChange={e => setUserData(prev => ({ ...prev, gender: e.target.value }))} value={userData.gender} name="" id="">
+                                ? <select
+                                    className='max-w-20 bg-gray-200 rounded-md p-1'
+                                    onChange={e => setUserData(prev => ({ ...prev, gender: e.target.value }))}
+                                    value={userData.gender || 'Male'} // Provide a fallback value here
+                                    name="gender"
+                                    id="gender"
+                                >
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
+
                                 : <p className='text-gray-500'>{userData.gender}</p>
                         }
                         <p className='font-medium'>Birthday:</p>
@@ -118,8 +129,8 @@ const MyProfile = () => {
                 <div>
                     {
                         isEdit
-                            ? <button className='border border-gray-300 py-1 px-5 rounded-2xl hover:bg-primary hover:text-white transition-all' onClick={updateUserProfileData}>Save</button>
-                            : <button className='border border-gray-300 py-1 px-5 rounded-2xl hover:bg-primary hover:text-white transition-all' onClick={() => setIsEdit(true)}>Edit</button>
+                            ? <button className='border border-gray-300 py-1 px-5 rounded-2xl hover:bg-orange-500 hover:text-white transition-all' onClick={updateUserProfileData}>Save</button>
+                            : <button className='border border-gray-300 py-1 px-5 rounded-2xl hover:bg-orange-500 hover:text-white transition-all' onClick={() => setIsEdit(true)}>Edit</button>
                     }
                 </div>
             </div>

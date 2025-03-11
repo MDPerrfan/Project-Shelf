@@ -117,9 +117,13 @@ const Table = () => {
                                 <td className="p-4 text-sm text-slate-600">{project.supervisor}</td>
                                 <td className="p-4 text-sm text-slate-600">{project.title}</td>
                                 <td className="p-4 text-sm">
-                                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 hover:underline">
-                                        View
-                                    </a>
+                                        {project.link ? (
+                                            <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                                View
+                                            </a>
+                                        ) : (
+                                            <span className="text-gray-400">No link</span>
+                                        )}
                                 </td>
                                 <td className="p-4 text-sm text-slate-600 ">{project.year}</td>
                                 <td className="p-4 text-sm text-slate-600 ">{project.keywords.join(", ")}</td>

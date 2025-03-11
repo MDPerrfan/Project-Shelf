@@ -136,12 +136,13 @@ const Dashboard = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`${backendUrl}/api/project/delete/${id}`);
-      if (response.data.success) {
-        setFilteredProjects(prevData => prevData.filter(proj => proj._id !== id));
-        setProjectData(prevData => prevData.filter(proj => proj._id !== id));
-        toast.success("Project deleted successfully!");
+      if (response.data.message === "Project deleted successfully") {
+        // Update both states using the fetchProjects function
+        await fetchProjects();
+        toast.success("Project deleted successfully");
       } else {
-        toast.error(response.data.message || "Failed to delete project");
+        console.error('Delete failed:', response.data);
+        toast.error("Failed to delete project");
       }
     } catch (error) {
       console.error("Error deleting project:", error);

@@ -55,7 +55,6 @@ export const AppContextProvider = (props) => {
         try {
             const { data } = await axios.get(backendUrl + '/api/project/get');
             if (data) {
-                console.log('Fetched project data:', data);
                 setProjectData(data);
                 return data;
             }
