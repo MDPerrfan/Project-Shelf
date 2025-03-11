@@ -32,7 +32,7 @@ const Table = () => {
     }, [projectData, searchTerm, supervisorFilter, yearFilter]);
     if (!projectData)
         return (
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <Oval visible={true} height="80" width="80" color="#4fa94d" ariaLabel="oval-loading" />
             </div>
         );
