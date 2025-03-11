@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import { Oval } from 'react-loader-spinner'
 
 const MyProfile = () => {
-    const { userData, setUserData, backendUrl, loadUserProfile } = useContext(AppContext);
+    const { userData, setUserData, backendUrl,getUserData } = useContext(AppContext);
     const [isEdit, setIsEdit] = useState(false)
     const [image, setImage] = useState(false)
     if (!userData) {
@@ -42,7 +42,7 @@ const MyProfile = () => {
 
             if (data.success) {
                 toast.success(data.message)
-                await loadUserProfile()
+                await getUserData()
                 setIsEdit(false)
                 setImage(false)
             } else {
