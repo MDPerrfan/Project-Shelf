@@ -6,12 +6,27 @@ import { AppContext } from '../Context/AppContext';
 import { Oval } from 'react-loader-spinner';
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
+
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { userData, projectData,setProjectData, logout,backendUrl } = useContext(AppContext);
+  const { userData, projectData, setProjectData, logout, backendUrl } = useContext(AppContext);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [editingProjectId, setEditingProjectId] = useState(null);
   const [editedProject, setEditedProject] = useState({});
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/project/get`);
+      setProjectData(response.data);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      toast.error("Failed to fetch projects");
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     if (!userData || !projectData) return;
@@ -27,35 +42,94 @@ const Dashboard = () => {
   };
 
   const handleChange = (e, field) => {
-    setEditedProject({ ...editedProject, [field]: e.target.value });
+    if (field === 'keywords') {
+      // Handle keywords as an array
+      const keywordsArray = e.target.value.split(',').map(k => k.trim());
+      setEditedProject({ ...editedProject, [field]: keywordsArray });
+    } else {
+      setEditedProject({ ...editedProject, [field]: e.target.value });
+    }
   };
 
   const handleSave = async (id) => {
     try {
-      const updatedProject = {
-        ...editedProject,
-        students: editedProject.students.filter(student => student.id && student.name)
+      // Validate required fields
+      if (!editedProject.batch || !editedProject.title || !editedProject.year) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+
+      // Validate students
+      if (!editedProject.students || editedProject.students.length === 0) {
+        toast.error("At least one student is required");
+        return;
+      }
+
+      // Check for empty student fields
+      const invalidStudent = editedProject.students.find(student => !student.sid || !student.name);
+      if (invalidStudent) {
+        toast.error("All students must have both ID and name filled");
+        return;
+      }
+
+      // Check for duplicate student IDs
+      const sids = editedProject.students.map(s => s.sid);
+      if (new Set(sids).size !== sids.length) {
+        toast.error("Duplicate student IDs are not allowed");
+        return;
+      }
+
+      // Prepare the update data
+      const updateData = {
+        batch: editedProject.batch,
+        title: editedProject.title,
+        supervisor: editedProject.supervisor,
+        year: editedProject.year,
+        link: editedProject.link || '',
+        keywords: editedProject.keywords || [],
+        students: editedProject.students.map(student => ({
+          sid: student.sid,
+          name: student.name
+        }))
       };
 
-      const response = await axios.put(`${backendUrl}/api/project/update/${id}`, updatedProject);
+      const response = await axios.put(`${backendUrl}/api/project/update/${id}`, updateData);
       
-      if (response.data.success) {
-        setFilteredProjects(prevData =>
-          prevData.map(proj => proj._id === id ? response.data.project : proj)
-        );
+      // The server returns the updated project directly
+      const updatedProject = response.data;
+      
+      if (updatedProject && updatedProject._id) {
         
-        setProjectData(prevData =>
-          prevData.map(proj => proj._id === id ? response.data.project : proj)
-        );
+        // Update filtered projects
+        setFilteredProjects(prevData => {
+          const newData = prevData.map(proj => 
+            proj._id === id ? updatedProject : proj
+          );
+          return newData;
+        });
+        
+        // Update global project data
+        setProjectData(prevData => {
+          const newData = prevData.map(proj => 
+            proj._id === id ? updatedProject : proj
+          );
+          return newData;
+        });
         
         toast.success("Project updated successfully!");
         setEditingProjectId(null);
+        setEditedProject({});
       } else {
-        toast.error(response.data.message || "Failed to update project");
+        console.error('Invalid project data:', response.data);
+        toast.error("Failed to update project: Invalid project data");
       }
     } catch (error) {
       console.error("Error updating project:", error);
-      toast.error(error.response?.data?.message || "Failed to update project");
+      console.error("Error response:", error.response?.data);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          "Failed to update project";
+      toast.error(errorMessage);
     }
   };
 
@@ -121,7 +195,7 @@ const Dashboard = () => {
                 </thead>
                 <tbody>
                   {filteredProjects.map((project, index) => (
-                    <tr key={index} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
+                    <tr key={project._id} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
                       <td className="p-4 text-md text-slate-600">
                         {editingProjectId === project._id ? (
                           <div className="space-y-2">
@@ -129,10 +203,10 @@ const Dashboard = () => {
                               <div key={idx} className="flex gap-2">
                                 <input 
                                   type="text" 
-                                  value={student.id || ''} 
+                                  value={student.sid} 
                                   onChange={(e) => {
                                     const newStudents = [...editedProject.students];
-                                    newStudents[idx] = { ...student, id: e.target.value };
+                                    newStudents[idx] = { ...student, sid: e.target.value };
                                     setEditedProject({ ...editedProject, students: newStudents });
                                   }} 
                                   className="border p-1 w-1/2" 
@@ -140,7 +214,7 @@ const Dashboard = () => {
                                 />
                                 <input 
                                   type="text" 
-                                  value={student.name || ''} 
+                                  value={student.name} 
                                   onChange={(e) => {
                                     const newStudents = [...editedProject.students];
                                     newStudents[idx] = { ...student, name: e.target.value };
@@ -154,7 +228,7 @@ const Dashboard = () => {
                                     onClick={() => {
                                       setEditedProject({
                                         ...editedProject,
-                                        students: [...editedProject.students, { id: '', name: '' }]
+                                        students: [...editedProject.students, { sid: '', name: '' }]
                                       });
                                     }}
                                     className="bg-green-500 text-white px-2 rounded"
@@ -182,7 +256,7 @@ const Dashboard = () => {
                           <div className="space-y-1">
                             {project.students?.map((student, idx) => (
                               <div key={idx} className="text-sm">
-                                <span className="font-medium">{student.id}</span> - {student.name}
+                                <span className="font-medium">{student.sid}</span> - {student.name}
                               </div>
                             ))}
                           </div>
@@ -191,20 +265,34 @@ const Dashboard = () => {
                       {["batch", "title", "supervisor", "year", "link", "keywords"].map((key, i) => (
                         <td key={i} className="p-4 text-md text-slate-600">
                           {editingProjectId === project._id ? (
-                            <input 
-                              type="text" 
-                              value={editedProject[key] || ''} 
-                              onChange={(e) => handleChange(e, key)} 
-                              className="border p-1 w-full" 
-                            />
+                            key === 'keywords' ? (
+                              <input 
+                                type="text" 
+                                value={editedProject[key]?.join(', ') || ''} 
+                                onChange={(e) => handleChange(e, key)} 
+                                className="border p-1 w-full" 
+                                placeholder="Comma-separated keywords"
+                              />
+                            ) : (
+                              <input 
+                                type="text" 
+                                value={editedProject[key] || ''} 
+                                onChange={(e) => handleChange(e, key)} 
+                                className="border p-1 w-full" 
+                              />
+                            )
                           ) : (
                             key === 'link' ? (
-                              <a href={project[key]} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                View
-                              </a>
+                              project[key] ? (
+                                <a href={project[key]} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                  View
+                                </a>
+                              ) : (
+                                <span className="text-gray-400">No link</span>
+                              )
                             ) : key === 'keywords' ? (
                               <div className="flex flex-wrap gap-1">
-                                {project[key].map((keyword, idx) => (
+                                {project[key]?.map((keyword, idx) => (
                                   <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
                                     {keyword}
                                   </span>

@@ -53,13 +53,15 @@ export const AppContextProvider = (props) => {
     };
     const getProjectsData = async () => {
         try {
-            const { data } = await axios.get(backendUrl + '/api/project/get')
+            const { data } = await axios.get(backendUrl + '/api/project/get');
             if (data) {
+                console.log('Fetched project data:', data);
                 setProjectData(data);
+                return data;
             }
         } catch (error) {
-            console.error("User Data Fetch Error:", error);
-            toast.error(error.message);
+            console.error("Project Data Fetch Error:", error);
+            toast.error(error.response?.data?.message || "Failed to fetch projects");
             setProjectData(null);
             return null;
         }
@@ -88,8 +90,8 @@ export const AppContextProvider = (props) => {
         setUserData,
         getUserData,
         projectData,
+        setProjectData,
         logout
-
     }
     return (
         <AppContext.Provider value={value}>

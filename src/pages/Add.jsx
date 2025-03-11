@@ -18,7 +18,7 @@ const Add = () => {
   const { userData, backendUrl } = useContext(AppContext);
   const [numStudents, setNumStudents] = useState(1);
   const [project, setProject] = useState({
-    students: [{ id: "", name: "" }],
+    students: [{ sid: "", name: "" }],
     batch: "",
     title: "",
     supervisor: userData?.name || "",
@@ -27,10 +27,34 @@ const Add = () => {
     keywords: [],
     customKeyword: ""
   });
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 2016 }, (_, i) => 2017 + i);
+
   const handleChange = (e) => {
     setProject({ ...project, [e.target.name]: e.target.value });
+  };
+
+  const handleStudentChange = (index, field, value) => {
+    setProject(prev => {
+      const newStudents = [...prev.students];
+      newStudents[index] = {
+        ...newStudents[index],
+        [field]: value
+      };
+      return {
+        ...prev,
+        students: newStudents
+      };
+    });
+  };
+
+  const handleNumStudentsChange = (e) => {
+    const num = parseInt(e.target.value);
+    setNumStudents(num);
+    setProject(prev => ({
+      ...prev,
+      students: Array(num).fill(null).map((_, index) => 
+        prev.students[index] || { sid: "", name: "" }
+      )
+    }));
   };
 
   const handleKeywordChange = (keyword) => {
@@ -55,6 +79,7 @@ const Add = () => {
       }));
     }
   };
+
   const removeKeyword = (keyword) => {
     setProject((prev) => ({
       ...prev,
@@ -62,39 +87,37 @@ const Add = () => {
     }));
   };
 
-  const handleStudentChange = (index, field, value) => {
-    setProject(prev => {
-      const newStudents = [...prev.students];
-      newStudents[index] = {
-        ...newStudents[index],
-        [field]: value
-      };
-      return {
-        ...prev,
-        students: newStudents
-      };
-    });
-  };
-
-  const handleNumStudentsChange = (e) => {
-    const num = parseInt(e.target.value);
-    setNumStudents(num);
-    setProject(prev => ({
-      ...prev,
-      students: Array(num).fill(null).map((_, index) => 
-        prev.students[index] || { id: "", name: "" }
-      )
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Validate required fields
+    if (!project.batch || !project.title || !project.year || project.keywords.length === 0) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Check if any student has empty fields
+    const invalidStudent = project.students.find(student => !student.sid || !student.name);
+    if (invalidStudent) {
+      toast.error("All students must have both ID and name filled.");
+      return;
+    }
+
+    // Check for duplicate student IDs
+    const sids = project.students.map(s => s.sid);
+    if (new Set(sids).size !== sids.length) {
+      toast.error("Duplicate student IDs are not allowed");
+      return;
+    }
+  
     try {
-      const { data } = await axios.post(`${backendUrl}/api/project/create`, project);
-      if (data.success) {
+      const response = await axios.post(`${backendUrl}/api/project/create`, project);
+      
+      if (response.data.success) {
         toast.success("Project added successfully!");
+        // Reset form
         setProject({
-          students: [{ id: "", name: "" }],
+          students: [{ sid: "", name: "" }],
           batch: "",
           title: "",
           supervisor: userData?.name || "",
@@ -105,16 +128,12 @@ const Add = () => {
         });
         setNumStudents(1);
       } else {
-        toast.error(data.message || "Something went wrong");
+        toast.error(response.data.message || "Failed to add project");
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // Show toast notification if Student ID already exists
-        toast.error(error.response.data.message);
-      } else {
-        console.log(error);
-        toast.error("An error occurred while adding the project.");
-      }
+      console.error("Error adding project:", error);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || "An error occurred while adding the project";
+      toast.error(errorMessage);
     }
   };
   
@@ -174,8 +193,8 @@ const Add = () => {
                           <input 
                             className="border rounded px-3 py-2"
                             type="text"
-                            value={student.id}
-                            onChange={(e) => handleStudentChange(index, 'id', e.target.value)}
+                            value={student.sid}
+                            onChange={(e) => handleStudentChange(index, 'sid', e.target.value)}
                             required
                           />
                         </div>
@@ -221,18 +240,38 @@ const Add = () => {
                 <div className="w-full lg:flex-1 flex flex-col gap-4">
                   <div className="flex flex-col gap-1">
                     <p>Supervisor</p>
-                    <input className="border rounded px-3 py-2" type="text" name="supervisor" value={project.supervisor} readOnly />
+                    <input 
+                      className="border rounded px-3 py-2"
+                      type="text"
+                      name="supervisor"
+                      value={project.supervisor}
+                      readOnly
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <p>Year</p>
-                    <select className="border rounded p-2" name="year" value={project.year} onChange={handleChange} required>
+                    <select 
+                      className="border rounded p-2"
+                      name="year"
+                      value={project.year}
+                      onChange={handleChange}
+                      required
+                    >
                       <option value="">Select Year</option>
-                      {years.map((year) => <option key={year} value={year}>{year}</option>)}
+                      {Array.from({ length: new Date().getFullYear() - 2016 }, (_, i) => 2017 + i).map((year) => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="flex flex-col gap-1">
                     <p>Project Link (if have)</p>
-                    <input className="border rounded px-3 py-2" type="url" name="link" value={project.link} onChange={handleChange} />
+                    <input 
+                      className="border rounded px-3 py-2"
+                      type="url"
+                      name="link"
+                      value={project.link}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="flex flex-col gap-1">

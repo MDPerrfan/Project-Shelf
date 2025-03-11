@@ -92,7 +92,7 @@ const Table = () => {
                     {/* Table Header */}
                     <thead className="sticky top-0 bg-slate-700 text-white">
                         <tr>
-                            {["Student ID", "Student Name", "Batch", "Supervisor", "Title", "Link", "Year", "Technologies"].map((heading, index) => (
+                            {["Students", "Batch", "Supervisor", "Title", "Link", "Year", "Technologies"].map((heading, index) => (
                                 <th key={index} className="p-4 text-sm font-semibold border-b border-slate-500">
                                     {heading}
                                 </th>
@@ -104,8 +104,15 @@ const Table = () => {
                     <tbody>
                         {filteredProjects.map((project, index) => (
                             <tr key={index} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
-                                <td className="p-4 text-sm font-medium text-slate-700">{project.id}</td>
-                                <td className="p-4 text-sm text-slate-600">{project.name}</td>
+                                <td className="p-4 text-sm font-medium text-slate-700">
+                                    {project.students.map((student, idx) => (
+                                        <div key={student.sid}>
+                                            {student.name} (ID:{student.sid})
+                                            {idx < project.students.length - 1 && ', '}
+                                        </div>
+                                    ))}
+                                </td>
+
                                 <td className="p-4 text-sm text-slate-600">{project.batch}</td>
                                 <td className="p-4 text-sm text-slate-600">{project.supervisor}</td>
                                 <td className="p-4 text-sm text-slate-600">{project.title}</td>
