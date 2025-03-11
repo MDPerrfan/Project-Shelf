@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import { Oval } from 'react-loader-spinner'
 
 const MyProfile = () => {
-    const { userData, setUserData, token, backendUrl, loadUserProfile } = useContext(AppContext);
+    const { userData, setUserData, backendUrl, loadUserProfile } = useContext(AppContext);
     const [isEdit, setIsEdit] = useState(false)
     const [image, setImage] = useState(false)
     if (!userData) {
@@ -105,17 +105,10 @@ const MyProfile = () => {
                         <p className='font-medium'>Gender:</p>
                         {
                             isEdit
-                                ? <select
-                                    className='max-w-20 bg-gray-200 rounded-md p-1'
-                                    onChange={e => setUserData(prev => ({ ...prev, gender: e.target.value }))}
-                                    value={userData.gender || 'Male'} // Provide a fallback value here
-                                    name="gender"
-                                    id="gender"
-                                >
+                                ? <select className='max-w-20 bg-gray-200  rounded-md p-1' onChange={e => setUserData(prev => ({ ...prev, gender: e.target.value }))} value={userData.gender} name="" id="">
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
-
                                 : <p className='text-gray-500'>{userData.gender}</p>
                         }
                         <p className='font-medium'>Birthday:</p>
