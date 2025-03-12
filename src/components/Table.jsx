@@ -19,7 +19,8 @@ const Table = () => {
             return (
                 (searchTerm === "" ||
                     project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    project.students.some((student) => student.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    project.students.some((student) => student.sid.toLowerCase().includes(searchTerm.toLowerCase())) ||
                     project.keywords.some((keyword) =>
                         keyword.toLowerCase().includes(searchTerm.toLowerCase())
                     )) &&
@@ -71,8 +72,8 @@ const Table = () => {
                         onChange={(e) => setSupervisorFilter(e.target.value)}
                     >
                         <option value="">Filter by Supervisor</option>
-                        {Array.from(new Set(projects.map((project) => project.supervisor))).map((supervisor, index) => (
-                            <option key={index} value={supervisor}>
+                        {Array.from(new Set(projects.map((project) => project.supervisor))).map((supervisor) => (
+                            <option key={supervisor} value={supervisor}>
                                 {supervisor}
                             </option>
                         ))}

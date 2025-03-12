@@ -159,7 +159,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b shadow py-0.5 px-4 sm:px-10 md:px-14 lg:px-36">
+      <div className="flex items-center justify-between border-b shadow py-0.5 px-4 sm:px-10 md:px-14 lg:px-20">
         <div>
           <img onClick={() => navigate('/')} src={assets.pciu} alt="Logo" className="sm:left-20 w-10 sm:w-14 cursor-pointer m-1" />
         </div>
@@ -170,6 +170,7 @@ const Dashboard = () => {
             <div className="min-w-48 bg-stone-100 p-4 rounded flex flex-col gap-4">
               <p onClick={() => navigate('/add-projects')} className="hover:text-black cursor-pointer">Add Project</p>
               <p onClick={() => navigate('/profile')} className="hover:text-black cursor-pointer">Profile</p>
+              <p onClick={() => navigate('/register')} className="hover:text-black cursor-pointer">Register Faculty</p>
               <p onClick={logout} className="hover:text-black cursor-pointer">Logout</p>
             </div>
           </div>

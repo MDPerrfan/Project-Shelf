@@ -4,13 +4,15 @@ import mail_icon from './mail_icon.svg'
 import dropdown_icon from './dropdown_icon.svg'
 import home_icon from './home_icon.svg'
 import add_icon from './add_icon.svg'
+import name from './name.png'
 export const assets = {
     pciu,
     lock_icon,
     mail_icon,
     dropdown_icon,
     home_icon,
-    add_icon
+    add_icon,
+    name
 }
 export const projects = [{
         id: "P-001",

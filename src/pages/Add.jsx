@@ -145,7 +145,7 @@ const Add = () => {
 
   return (
     <div className=''>
-      <div className='flex items-center justify-between border-b shadow py-0.5 px-4 sm:px-10 md:px-14 lg:px-36 '>
+      <div className='flex items-center justify-between border-b shadow py-0.5 px-4 sm:px-10 md:px-14 lg:px-20 '>
         <div>
           <img onClick={() => navigate('/')} src={assets.pciu} alt="Logo" className="w-10 sm:w-14 cursor-pointer m-1" />
         </div>

@@ -9,6 +9,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Add from './pages/Add'
+import Register from './pages/Register'
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register/>}/>
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/reset-pass' element={<ResetPass />} />
         <Route path='/profile' element={<Profile />} />
