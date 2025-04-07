@@ -14,6 +14,10 @@ const Sidebar = () => {
                 <img src={assets.add_icon} alt="" />
                 <p className='hidden lg:block '>Add Projects/Thesis</p>
             </NavLink>
+            <NavLink className={({isActive})=>` flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-28 cursor-pointer ${isActive?'bg-gray-400 border-r-4 border-primary text-white ':''}`} to={'/register'}>
+                <img src={assets.name_icon} alt="" className='bg-black w-7 rounded-full'/>
+                <p className='hidden lg:block '>Register Faculty</p>
+            </NavLink>
         </ul>
       }
       

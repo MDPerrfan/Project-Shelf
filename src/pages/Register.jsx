@@ -32,7 +32,7 @@ const Register = () => {
         <div className='flex items-center justify-center min-h-screen px-6 sm:px-0 '>
             <div>
                 <img
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/dashboard')}
                     src={assets.pciu}
                     alt="Logo"
                     className="absolute left-5 sm:left-20 top-5 w-10 sm:w-16 cursor-pointer "
