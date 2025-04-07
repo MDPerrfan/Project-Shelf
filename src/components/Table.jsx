@@ -1,8 +1,7 @@
 import React, { useContext, useEffect } from 'react'
-import { projects } from '../assets/assets'
 import { useState } from "react";
 import { AppContext } from '../Context/AppContext';
-import { Oval } from 'react-loader-spinner'
+import { RotatingLines} from 'react-loader-spinner'
 
 const Table = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -11,6 +10,7 @@ const Table = () => {
     const [filteredProjects, setFilteredProjects] = useState([]);
 
     const { projectData } = useContext(AppContext);
+
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 2016 }, (_, i) => 2017 + i);
     useEffect(() => {
@@ -31,12 +31,23 @@ const Table = () => {
         });
         setFilteredProjects(filtered);
     }, [projectData, searchTerm, supervisorFilter, yearFilter]);
+
     if (!projectData)
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <Oval visible={true} height="80" width="80" color="#4fa94d" ariaLabel="oval-loading" />
-            </div>
+                <RotatingLines
+                    visible={true}
+                    height="96"
+                    width="96"
+                    color=""
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    ariaLabel="rotating-lines-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                />            </div>
         );
+    const supervisors = [...new Set(projectData.map(project => project.supervisor))];
     return (
         <div className="py-0.5 px-4 sm:px-10 md:px-14 lg:px-36 min-h-lvh">
             <div className="flex flex-col lg:flex-row md:items-start md:flex-row justify-between mb-3 mt-1 ">
@@ -72,7 +83,7 @@ const Table = () => {
                         onChange={(e) => setSupervisorFilter(e.target.value)}
                     >
                         <option value="">Filter by Supervisor</option>
-                        {Array.from(new Set(projects.map((project) => project.supervisor))).map((supervisor) => (
+                        {supervisors.map((supervisor) => (
                             <option key={supervisor} value={supervisor}>
                                 {supervisor}
                             </option>
@@ -103,21 +114,27 @@ const Table = () => {
 
                     {/* Table Body */}
                     <tbody>
-                        {filteredProjects.map((project, index) => (
-                            <tr key={index} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
-                                <td className="p-4 text-sm font-medium text-slate-700">
-                                    {project.students.map((student, idx) => (
-                                        <div key={student.sid}>
-                                            {student.name} (ID:{student.sid})
-                                            {idx < project.students.length - 1 && ', '}
-                                        </div>
-                                    ))}
+                        {filteredProjects.length === 0 ? (
+                            <tr>
+                                <td colSpan="7" className="p-6 text-center text-gray-500">
+                                    No results found.
                                 </td>
-
-                                <td className="p-4 text-sm text-slate-600">{project.batch}</td>
-                                <td className="p-4 text-sm text-slate-600">{project.supervisor}</td>
-                                <td className="p-4 text-sm text-slate-600">{project.title}</td>
-                                <td className="p-4 text-sm">
+                            </tr>
+                        ) : (
+                            filteredProjects.map((project, index) => (
+                                <tr key={index} className={`border-b border-slate-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
+                                    <td className="p-4 text-sm font-medium text-slate-700">
+                                        {project.students.map((student, idx) => (
+                                            <div key={student.sid}>
+                                                {student.name} (ID:{student.sid})
+                                                {idx < project.students.length - 1 && ', '}
+                                            </div>
+                                        ))}
+                                    </td>
+                                    <td className="p-4 text-sm text-slate-600">{project.batch}</td>
+                                    <td className="p-4 text-sm text-slate-600">{project.supervisor}</td>
+                                    <td className="p-4 text-sm text-slate-600">{project.title}</td>
+                                    <td className="p-4 text-sm">
                                         {project.link ? (
                                             <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                                                 View
@@ -125,12 +142,14 @@ const Table = () => {
                                         ) : (
                                             <span className="text-gray-400">No link</span>
                                         )}
-                                </td>
-                                <td className="p-4 text-sm text-slate-600 ">{project.year}</td>
-                                <td className="p-4 text-sm text-slate-600 ">{project.keywords.join(", ")}</td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td className="p-4 text-sm text-slate-600 ">{project.year}</td>
+                                    <td className="p-4 text-sm text-slate-600 ">{project.keywords.join(", ")}</td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
+
                 </table>
             </div>
 
