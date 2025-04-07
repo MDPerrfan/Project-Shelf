@@ -43,7 +43,7 @@ const Register = () => {
                 <h1 className='text-gray-800 font-semibold text-3xl text-center pb-4'>Register</h1>
                 <form onSubmit={onSubmitHandler}>
                     <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
-                        <img src={assets.name} alt="Mail Icon" className='w-5' />
+                        <img src={assets.name_icon} alt="Mail Icon" className='w-5' />
                         <input
                             onChange={(e) => setName(e.target.value)}
                             value={name}
