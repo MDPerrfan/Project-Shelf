@@ -15,12 +15,11 @@ const Register = () => {
     const onSubmitHandler = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post(backendUrl + '/api/user/register', { name, email, password })
+            const response = await axios.post(backendUrl + '/api/user/register', { name, email })
             if (response) {
                 toast.success("New Faculty added!")
                 setName("")
                 setEmail("")
-                setPassword("")
                 navigate('/dashboard')
             } else {
                 toast.error(response.message);
@@ -65,7 +64,7 @@ const Register = () => {
                             required
                         />
                     </div>
-                    <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+                  {/*   <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
                         <img src={assets.lock_icon} alt="Lock Icon" />
                         <input
                             onChange={(e) => setPassword(e.target.value)}
@@ -75,7 +74,7 @@ const Register = () => {
                             placeholder="Password"
                             required
                         />
-                    </div>
+                    </div> */}
                     <button type="submit" className="w-full py-2.5 rounded-full bg-blue-600/50 text-white shadow-md hover:bg-slate-500  flex justify-center items-center ">
                         Register
                     </button>

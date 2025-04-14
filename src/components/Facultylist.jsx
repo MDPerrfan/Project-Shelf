@@ -7,7 +7,6 @@ const Facultylist = () => {
     const [expanded, setExpanded] = useState(false);
     const [showMobileTable, setShowMobileTable] = useState(false);
 
-    console.log(alluserName)
     if (!alluserName)
         return (
             <div className="flex items-center justify-center min-h-[20vh]">

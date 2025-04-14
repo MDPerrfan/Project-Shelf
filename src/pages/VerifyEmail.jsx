@@ -46,7 +46,7 @@ const VerifyEmail = () => {
       const { data } = await axios.post(backendUrl + '/api/user/verify-email', { otp: otpValue });
       if (data.success) {
         toast.success(data.message);
-        navigate('/');
+        navigate('/reset-pass');
       } else {
         toast.error(data.message);
       }

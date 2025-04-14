@@ -103,7 +103,7 @@ const Login = () => {
                         />
                     </div>
                     <p onClick={() => navigate('/reset-pass')} className="mb-4 text-orange-800 cursor-pointer font-semibold">
-                        Forgot Password?
+                        Reset Password?
                     </p>
                     <button
                         type="submit"
