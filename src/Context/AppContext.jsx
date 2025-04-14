@@ -13,16 +13,17 @@ export const AppContextProvider = (props) => {
     const [isLoggedin, setIsLoggedin] = useState(false);
     const [userData, setUserData] = useState(null);
     const [projectData, setProjectData] = useState(null);
+    const [alluserName,setAllusername]=useState(null)
     const navigate = useNavigate()
     axios.defaults.withCredentials = true;
 
-    // ✅ Fetch auth state and user data on page load
+    // Fetch auth state and user data on page load
     const getAuthState = async () => {
         try {
             const { data } = await axios.get(`${backendUrl}/api/user/is-auth`);
             if (data.success) {
                 setIsLoggedin(true);
-                const user = await getUserData(); // ✅ Fetch user data when user is authenticated
+                const user = await getUserData(); // Fetch user data when user is authenticated
                 if (user) setUserData(user);
             } else {
                 setIsLoggedin(false);
@@ -35,13 +36,13 @@ export const AppContextProvider = (props) => {
         }
     };
 
-    // ✅ Modify getUserData to return user data
+    // Modify getUserData to return user data
     const getUserData = async () => {
         try {
             const { data } = await axios.get(`${backendUrl}/api/user/data`);
             if (data.success) {
                 setUserData(data.userData);
-                return data.userData; // ✅ Return user data so it can be used immediately
+                return data.userData; // Return user data so it can be used immediately
             } else {
                 toast.error(data.message);
                 return null;
@@ -53,6 +54,18 @@ export const AppContextProvider = (props) => {
             return null;
         }
     };
+    const getAlluserName = async()=>{
+        try{
+            const {data}= await axios.get(backendUrl+ '/api/user/allusername')
+            if(data.success){
+                setAllusername(data.userData);
+            }else{
+                toast.error(data.message);
+            }
+        }catch(error){
+            console.error(error.message);
+        }
+    }
     const getProjectsData = async () => {
         try {
             const { data } = await axios.get(backendUrl + '/api/project/get');
@@ -82,6 +95,7 @@ export const AppContextProvider = (props) => {
     useEffect(() => {
         getAuthState();
         getProjectsData();
+        getAlluserName()
     }, []);
     const value = {
         backendUrl,
@@ -92,7 +106,8 @@ export const AppContextProvider = (props) => {
         getUserData,
         projectData,
         setProjectData,
-        logout
+        logout,
+        alluserName,
     }
     return (
         <AppContext.Provider value={value}>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../Context/AppContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import Facultylist from '../components/Facultylist';
 const Register = () => {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -29,7 +30,7 @@ const Register = () => {
         }
     }
     return (
-        <div className='flex items-center justify-center min-h-screen px-6 sm:px-0 '>
+        <div className='flex flex-col items-center justify-center min-h-screen px-6 sm:px-0 gap-10 '>
             <div>
                 <img
                     onClick={() => navigate('/dashboard')}
@@ -79,6 +80,9 @@ const Register = () => {
                         Register
                     </button>
                 </form>
+            </div>
+            <div>
+                <Facultylist />
             </div>
         </div>)
 }
