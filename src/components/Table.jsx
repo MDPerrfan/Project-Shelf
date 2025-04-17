@@ -99,7 +99,7 @@ const Table = () => {
                 </div>
             </div>
 
-            <div className="relative w-full h-full overflow-auto bg-white shadow-lg rounded-lg">
+            <div className="relative w-full h-[50vh]  overflow-auto bg-white shadow-lg rounded-lg">
                 <table className="w-full text-left border-collapse">
                     {/* Table Header */}
                     <thead className="sticky top-0 bg-slate-700 text-white">
