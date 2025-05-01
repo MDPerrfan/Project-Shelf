@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { useState } from "react";
 import { AppContext } from '../Context/AppContext';
 import { RotatingLines} from 'react-loader-spinner'
+import * as XLSX from 'xlsx';
 
 const Table = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -13,6 +14,31 @@ const Table = () => {
 
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 2016 }, (_, i) => 2017 + i);
+
+    const handleDownload = () => {
+        // Prepare data for Excel
+        const excelData = filteredProjects.map(project => ({
+            'Students': project.students.map(student => student.name).join(', '),
+            'Student ID': project.students.map(student => student.sid).join(', '),
+            'Batch': project.batch,
+            'Supervisor': project.supervisor,
+            'Title': project.title,
+            'Link': project.link || 'No link',
+            'Year': project.year,
+            'Technologies': project.keywords.join(', ')
+        }));
+
+        // Create worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        
+        // Create workbook
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects');
+        
+        // Generate Excel file
+        XLSX.writeFile(workbook, 'projects_data.xlsx');
+    };
+
     useEffect(() => {
         if (!projectData) return;
         const filtered = projectData.filter((project) => {
@@ -96,6 +122,15 @@ const Table = () => {
                         <option value="">Select Year</option>
                         {years.map((year) => <option key={year} value={year}>{year}</option>)}
                     </select>
+                    <button
+                        onClick={handleDownload}
+                        className="p-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download
+                    </button>
                 </div>
             </div>
 
