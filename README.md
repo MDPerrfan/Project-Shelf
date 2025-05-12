@@ -1,2 +1,2 @@
-#admin: errfanparves10@gmail.com
-#pass: 12345678
+admin: errfanparves10@gmail.com
+pass: 12345678
